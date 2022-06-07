@@ -1,6 +1,7 @@
 const db = {
   messages: [
-
+  ],
+  users: [
   ]
 };
 

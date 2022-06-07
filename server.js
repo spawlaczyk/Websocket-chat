@@ -3,6 +3,7 @@ const path = require('path');
 const socket = require('socket.io');
 const db = require('./db');
 const messages = db.messages;
+const users = db.users;
 
 const app = express();
 
@@ -26,6 +27,20 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('message', message);
   });
 
-  socket.on('disconnect', () => { console.log('Oh, socket ' + socket.id + ' has left') });
-  console.log('I\'ve added a listener on message event \n');
+  socket.on('join', (user) => {
+    console.log('New user: ' + user.login);
+    users.push(user);
+    socket.broadcast.emit('newUser', { author: 'Chat Bot', content: user.login + ' has joined the conversation!' });
+  });
+
+  socket.on('disconnect', () => { 
+    console.log('Oh, socket ' + socket.id + ' has left') 
+    console.log('I\'ve added a listener on message event \n');
+    const user = users.find((user) => user.id === socket.id);
+    const index = users.indexOf(user);
+    if(index > 0){
+      socket.broadcast.emit('removeUser', { author: 'Chat Bot', content: user.login + ' has left the conversation... :(' });
+      users.splice(index, 1);
+    };
+  });
 });

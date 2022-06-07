@@ -108,6 +108,10 @@ p {
   display: block;
 }
 
+.chat-bot {
+  font-style: italic;
+}
+
 @-webkit-keyframes fadeIn {
   from {
     opacity: 0;

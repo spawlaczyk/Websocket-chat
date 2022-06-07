@@ -1,6 +1,8 @@
 const socket = io();
 
 socket.on('message', ({ author, content }) => addMessage(author, content));
+socket.on('newUser', ({ author, content }) => addMessage(author, content));
+socket.on('removeUser', ({ author, content }) => addMessage(author, content));
 
 const loginForm = document.getElementById('welcome-form');
 const messagesSection = document.getElementById('messages-section');
@@ -16,6 +18,7 @@ const login = function(event) {
   
   if(userNameInput.value){
     userName = userNameInput.value;
+    socket.emit('join', { id: socket.id, login: userName });
     loginForm.classList.remove('show');
     messagesSection.classList.add('show');
   } else {
@@ -32,7 +35,7 @@ const addMessage = function(author, content) {
 
   message.innerHTML = 
   `<h3 class='message__author'>${userName === author ? 'You' : author}</h3>
-  <div class='message__content'>
+  <div class='message__content ${author == 'Chat Bot' ? 'chat-bot' : ''}'>
     ${content}
   </div>`;
   messagesList.appendChild(message);
